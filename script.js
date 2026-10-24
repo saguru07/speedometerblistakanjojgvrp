@@ -214,9 +214,9 @@ document.addEventListener('DOMContentLoaded', () => {
     drawScale($('speed-scale'), { r: 90, from: 0, to: MAX_SPEED, major: 20, minor: 10, lr: 68, cls: 'num', label: v => v, majLen: 11, minLen: 6 });
 
     // Fuel (E-F) dan Engine Health (0-100)
-    const small = { cy: 100, r: 62, from: 0, to: 1, major: 0.5, minor: 0.125, majLen: 10, minLen: 6, lr: 44, cls: 'num tiny' };
-    drawScale($('fuel-scale'), { ...small, cx: 78, sweep: SWEEP.fuel, label: v => (v === 0 ? 'E' : v === 1 ? 'F' : '') });
-    drawScale($('health-scale'), { ...small, cx: 122, sweep: SWEEP.health, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
+    const small = { cy: 100, r: 56, from: 0, to: 1, major: 0.5, minor: 0.125, majLen: 9, minLen: 6, lr: 40, cls: 'num tiny' };
+    drawScale($('fuel-scale'), { ...small, cx: 70, sweep: SWEEP.fuel, label: v => (v === 0 ? 'E' : v === 1 ? 'F' : '') });
+    drawScale($('health-scale'), { ...small, cx: 130, sweep: SWEEP.health, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
 
     buildGears(maxGear);
 
