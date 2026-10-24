@@ -30,9 +30,6 @@
         <div class="gears" id="gears" aria-label="Gear"></div>
 
         <div class="gauges">
-            <!-- Odometer mekanik -->
-            <div class="odometer" id="odometer" aria-label="Odometer"></div>
-
             <!-- Lampu di antara dial -->
             <span class="lamp pos-top-right" id="lamp-headlights"><svg><use href="#ic-beam"/></svg></span>
             <span class="lamp green pos-bottom-left" id="lamp-engine"><svg><use href="#ic-engine"/></svg></span>
@@ -52,6 +49,10 @@
                 <circle class="face" cx="100" cy="100" r="96"/>
                 <g id="speed-scale"></g>
                 <text class="sub" x="100" y="62">mph</text>
+                <!-- Odometer mekanik: di belakang jarum -->
+                <foreignObject x="62" y="128" width="76" height="20">
+                    <div class="odometer" id="odometer" aria-label="Odometer"></div>
+                </foreignObject>
                 <use class="ind" id="lamp-left" href="#ic-arrow" x="46" y="84" width="18" height="16"/>
                 <g transform="translate(154 84) scale(-1 1)"><use class="ind" id="lamp-right" href="#ic-arrow" width="18" height="16"/></g>
                 <g class="needle" id="needle-speed"><line x1="100" y1="114" x2="100" y2="24"/></g>
