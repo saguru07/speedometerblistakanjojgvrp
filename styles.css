@@ -1,105 +1,77 @@
-* {
-    user-select: none;
-    user-drag: none;
-    box-sizing: border-box;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speedometer Template</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Ikon (stroke-only, warna mengikuti currentColor) -->
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+        <symbol id="ic-engine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 6h5M10.5 6V8M6 8h8l2 2h2v-1.5h2V15h-2v-1.5h-2l-2 3.5H7.5L6 15.5H4V11h2z"/>
+        </symbol>
+        <symbol id="ic-fuel" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M5 21V4h9v17M3 21h13M5 10h9M14 8h2.5l2 2v7a1.5 1.5 0 0 0 3 0V8l-3-3"/>
+        </symbol>
+        <symbol id="ic-belt" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="5" r="2.2"/><path d="M8 21l1.5-9L7 9.5h8.5L14 21M9.5 12l7 5"/>
+        </symbol>
+        <symbol id="ic-beam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10 5a7 7 0 0 0 0 14zM14 7.5h7M14 12h7M14 16.5h7"/>
+        </symbol>
+        <symbol id="ic-arrow" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M2 12l9-8v5h11v6H11v5z"/>
+        </symbol>
+    </svg>
 
-body {
-    background-color: transparent !important;
-    font-family: 'Arial Narrow', Arial, sans-serif;
-    margin: 0;
-}
+    <main class="speedometer">
+        <div class="gears" id="gears" aria-label="Gear"></div>
 
-main {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
+        <div class="gauges">
+            <!-- Lampu di antara dial -->
+            <span class="lamp pos-top-right" id="lamp-headlights"><svg><use href="#ic-beam"/></svg></span>
+            <span class="lamp green pos-bottom-left" id="lamp-engine"><svg><use href="#ic-engine"/></svg></span>
+            <span class="lamp red pos-bottom-right" id="lamp-seatbelt"><svg><use href="#ic-belt"/></svg></span>
 
-    width: 560px;
-    padding: 12px 16px 14px;
-    color: white;
-    background: #141518;
-    border-radius: 56px 56px 26px 26px / 44px 44px 26px 26px;
-    box-shadow: inset 0 0 0 3px #2b2c31, 0 6px 18px #000000AA;
-}
+            <!-- Tachometer -->
+            <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="RPM">
+                <circle class="face" cx="100" cy="100" r="96"/>
+                <g id="tach-scale"></g>
+                <text class="sub" x="100" y="146">x1000 rpm</text>
+                <g class="needle" id="needle-rpm"><line x1="100" y1="114" x2="100" y2="26"/></g>
+                <circle class="hub" cx="100" cy="100" r="9"/>
+            </svg>
 
-/* Lampu indikator (di antara dial) */
-.lamp {
-    position: absolute;
-    width: 24px;
-    height: 24px;
-    color: #2c2d32;
-    transition: color .1s, filter .1s;
-}
+            <!-- Speedometer -->
+            <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Speed">
+                <circle class="face" cx="100" cy="100" r="96"/>
+                <g id="speed-scale"></g>
+                <text class="sub" x="100" y="62">mph</text>
+                <rect class="lcd" x="64" y="138" width="72" height="16" rx="2"/>
+                <text class="lcdtxt" id="odometer" x="100" y="146">0.0 mi</text>
+                <text class="digital" id="speed" x="100" y="124">0 MPH</text>
+                <use class="ind" id="lamp-left" href="#ic-arrow" x="46" y="111" width="18" height="16"/>
+                <g transform="translate(154 111) scale(-1 1)"><use class="ind" id="lamp-right" href="#ic-arrow" width="18" height="16"/></g>
+                <g class="needle" id="needle-speed"><line x1="100" y1="114" x2="100" y2="24"/></g>
+                <circle class="hub" cx="100" cy="100" r="9"/>
+            </svg>
 
-.lamp svg { width: 100%; height: 100%; }
-
-/* Batas speedometer-RPM = 30.6%, speedometer-fuel = 69.4% */
-.pos-top-right    { left: 69.4%; top: 4px;    transform: translateX(-50%); }
-.pos-bottom-left  { left: 30.6%; bottom: 4px; transform: translateX(-50%); }
-.pos-bottom-right { left: 69.4%; bottom: 4px; transform: translateX(-50%); }
-
-.lamp.green.on { color: #3dff7a; filter: drop-shadow(0 0 5px #3dff7a); }
-.lamp.red.on   { color: #ff3b30; filter: drop-shadow(0 0 5px #ff2a20); }
-.lamp.warn.on  { color: #ffa21a; filter: drop-shadow(0 0 5px #ff8a00); }
-.lamp.low      { color: #3dff7a; filter: drop-shadow(0 0 5px #3dff7a); }
-.lamp.high     { color: #3b8cff; filter: drop-shadow(0 0 5px #2f7bff); }
-
-/* Sein di dalam speedometer */
-.ind { color: #b9b5aa; transition: color .1s; }
-.ind.on { color: #1fbf4f; filter: drop-shadow(0 0 3px #3dff7a); }
-
-/* Dial */
-.gauges {
-    position: relative;
-    display: grid;
-    grid-template-columns: 1fr 1.25fr 1fr;
-    align-items: center;
-    gap: 8px;
-}
-
-.gauge { width: 100%; height: auto; display: block; transition: filter .3s; }
-.engine-off .gauge { filter: brightness(.45); }
-
-.face { fill: #efece4; stroke: #0d0d0f; stroke-width: 3; }
-.tick { stroke: #1a1a1a; stroke-linecap: round; }
-.num {
-    font: 700 11px 'Arial Narrow', Arial, sans-serif;
-    fill: #1a1a1a;
-    text-anchor: middle;
-    dominant-baseline: central;
-}
-.num.tiny { font-size: 9px; }
-.redzone { fill: none; stroke: #d4281f; stroke-width: 5; }
-.sub {
-    font: 700 8px 'Arial Narrow', Arial, sans-serif;
-    fill: #333;
-    text-anchor: middle;
-}
-.icon { color: #222; }
-
-.needle {
-    transform-box: view-box;
-    transform-origin: 100px 100px;
-    transition: transform .15s linear;
-}
-.needle line {
-    stroke: #ff6a1a;
-    stroke-width: 3.5;
-    stroke-linecap: round;
-}
-.needle.small line { stroke-width: 3; }
-.hub { fill: #1b1b1e; stroke: #3a3a40; stroke-width: 1.5; }
-
-/* LCD tengah speedometer */
-.lcd { fill: #cbd2bb; stroke: #3a3a3a; stroke-width: 1.2; }
-.lcdtxt {
-    font: 700 9px 'Courier New', monospace;
-    fill: #222;
-    text-anchor: middle;
-}
-.digital {
-    font: 700 15px 'Arial Narrow', Arial, sans-serif;
-    fill: #111;
-    text-anchor: middle;
-}
+            <!-- Fuel + Engine Health (saling berhadapan) -->
+            <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Fuel and engine health">
+                <circle class="face" cx="100" cy="100" r="96"/>
+                <g id="fuel-scale"></g>
+                <g id="health-scale"></g>
+                <use class="icon" href="#ic-fuel" x="82" y="115" width="17" height="17"/>
+                <use class="icon" href="#ic-engine" x="101" y="115" width="17" height="17"/>
+                <g class="needle small" id="needle-fuel" style="transform-origin:78px 100px"><line x1="78" y1="106" x2="78" y2="46"/></g>
+                <g class="needle small" id="needle-health" style="transform-origin:122px 100px"><line x1="122" y1="106" x2="122" y2="46"/></g>
+                <circle class="hub" cx="78" cy="100" r="6"/>
+                <circle class="hub" cx="122" cy="100" r="6"/>
+            </svg>
+        </div>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
