@@ -6,7 +6,7 @@ const NS = 'http://www.w3.org/2000/svg';
 const clamp01 = v => Math.min(1, Math.max(0, Number(v) || 0));
 
 // Sudut jarum (derajat, searah jarum jam dari atas)
-const SWEEP = { big: [-135, 135], fuel: [230, 310], health: [130, 50] };
+const SWEEP = { big: [-135, 135], fuel: [205, 335], health: [155, 25] };
 const MAX_SPEED = 140; // mph
 
 /* ---------- Helper SVG ---------- */
@@ -100,12 +100,39 @@ function setHealth(health) {
     elements.lampEngine.classList.toggle('warn', clamp01(health) < 0.3);
 }
 
+let maxGear = 6;
+
+/** Membuat deretan indikator gear: R, N, 1 ... maxGear. */
+function buildGears(max) {
+    maxGear = max;
+    const wrap = elements.gears;
+    wrap.replaceChildren();
+    ['R', 'N', ...Array.from({ length: max }, (_, i) => String(i + 1))].forEach(label => {
+        const span = document.createElement('span');
+        span.className = 'gear' + (label === 'R' ? ' rev' : '');
+        span.dataset.gear = label;
+        span.textContent = label;
+        wrap.appendChild(span);
+    });
+}
+
 /**
- * Updates the current gear display.
- * @param {number} gear - The current gear to display. 0 represents neutral/reverse.
+ * Sets the highest gear shown on the gear indicator.
+ * @param {number} max - Jumlah gigi maju (mis. 5 atau 6).
  */
-function setGear(gear) {
-    elements.gear.textContent = gear === 0 ? 'N/R' : String(gear);
+function setMaxGear(max) {
+    buildGears(Math.max(1, Math.floor(max)));
+}
+
+/**
+ * Updates the gear indicator. Hanya satu indikator menyala:
+ * R = merah, N / 1 / 2 / ... = hijau. Perubahan di-fade lewat CSS transition.
+ * @param {number} gear - The current gear: negative = reverse, 0 = neutral, 1+ = forward gear.
+ * @param {boolean} [reverse=false] - Set true untuk reverse jika sumber data memakai 0 untuk reverse dan neutral.
+ */
+function setGear(gear, reverse = false) {
+    const key = (reverse || gear < 0) ? 'R' : gear === 0 ? 'N' : String(Math.min(gear, maxGear));
+    elements.gears.querySelectorAll('.gear').forEach(g => g.classList.toggle('on', g.dataset.gear === key));
 }
 
 /**
@@ -164,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
     elements = {
         speed: $('speed'),
-        gear: $('gear'),
+        gears: $('gears'),
         odometer: $('odometer'),
         needleRpm: $('needle-rpm'),
         needleSpeed: $('needle-speed'),
@@ -187,21 +214,23 @@ document.addEventListener('DOMContentLoaded', () => {
     drawScale($('speed-scale'), { r: 90, from: 0, to: MAX_SPEED, major: 20, minor: 10, lr: 68, cls: 'num', label: v => v, majLen: 11, minLen: 6 });
 
     // Fuel (E-F) dan Engine Health (0-100)
-    const small = { cy: 100, r: 48, from: 0, to: 1, major: 0.5, minor: 0.25, majLen: 8, minLen: 5, lr: 33, cls: 'num tiny' };
+    const small = { cy: 100, r: 62, from: 0, to: 1, major: 0.5, minor: 0.125, majLen: 10, minLen: 6, lr: 44, cls: 'num tiny' };
     drawScale($('fuel-scale'), { ...small, cx: 78, sweep: SWEEP.fuel, label: v => (v === 0 ? 'E' : v === 1 ? 'F' : '') });
     drawScale($('health-scale'), { ...small, cx: 122, sweep: SWEEP.health, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
 
+    buildGears(maxGear);
+
     // Posisi awal
-    setEngine(false); setSpeed(0); setRPM(0); setFuel(0); setHealth(1);
+    setEngine(false); setGear(0); setSpeed(0); setRPM(0); setFuel(0); setHealth(1);
 
     // Preview di browser: buka index.html#demo
     if (location.hash === '#demo') {
         let t = 0;
-        setEngine(true); setOdometer(12345.6); setGear(3); setFuel(0.65); setHeadlights(1); setSeatbelts(true);
+        setEngine(true); setOdometer(12345.6); setFuel(0.65); setHeadlights(1); setSeatbelts(true);
         setInterval(() => {
             t += 0.03;
             const k = (Math.sin(t) + 1) / 2;
-            setSpeed(k * 60); setRPM(0.15 + k * 0.75); setHealth(1 - k * 0.8);
+            setSpeed(k * 60); setGear(Math.min(maxGear, 1 + Math.floor(k * maxGear))); setRPM(0.15 + k * 0.75); setHealth(1 - k * 0.8);
             setLeftIndicator(Math.sin(t * 8) > 0);
         }, 50);
     }
