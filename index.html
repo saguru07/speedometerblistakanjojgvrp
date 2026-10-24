@@ -30,13 +30,16 @@
         <div class="gears" id="gears" aria-label="Gear"></div>
 
         <div class="gauges">
+            <!-- Odometer mekanik -->
+            <div class="odometer" id="odometer" aria-label="Odometer"></div>
+
             <!-- Lampu di antara dial -->
             <span class="lamp pos-top-right" id="lamp-headlights"><svg><use href="#ic-beam"/></svg></span>
             <span class="lamp green pos-bottom-left" id="lamp-engine"><svg><use href="#ic-engine"/></svg></span>
             <span class="lamp red pos-bottom-right" id="lamp-seatbelt"><svg><use href="#ic-belt"/></svg></span>
 
             <!-- Tachometer -->
-            <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="RPM">
+            <svg class="gauge side" viewBox="0 0 200 200" role="img" aria-label="RPM">
                 <circle class="face" cx="100" cy="100" r="96"/>
                 <g id="tach-scale"></g>
                 <text class="sub" x="100" y="146">x1000 rpm</text>
@@ -49,17 +52,14 @@
                 <circle class="face" cx="100" cy="100" r="96"/>
                 <g id="speed-scale"></g>
                 <text class="sub" x="100" y="62">mph</text>
-                <rect class="lcd" x="64" y="138" width="72" height="16" rx="2"/>
-                <text class="lcdtxt" id="odometer" x="100" y="146">0.0 mi</text>
-                <text class="digital" id="speed" x="100" y="124">0 MPH</text>
-                <use class="ind" id="lamp-left" href="#ic-arrow" x="46" y="111" width="18" height="16"/>
-                <g transform="translate(154 111) scale(-1 1)"><use class="ind" id="lamp-right" href="#ic-arrow" width="18" height="16"/></g>
+                <use class="ind" id="lamp-left" href="#ic-arrow" x="46" y="84" width="18" height="16"/>
+                <g transform="translate(154 84) scale(-1 1)"><use class="ind" id="lamp-right" href="#ic-arrow" width="18" height="16"/></g>
                 <g class="needle" id="needle-speed"><line x1="100" y1="114" x2="100" y2="24"/></g>
                 <circle class="hub" cx="100" cy="100" r="9"/>
             </svg>
 
             <!-- Fuel + Engine Health (saling berhadapan) -->
-            <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Fuel and engine health">
+            <svg class="gauge side" viewBox="0 0 200 200" role="img" aria-label="Fuel and engine health">
                 <circle class="face" cx="100" cy="100" r="96"/>
                 <g id="fuel-scale"></g>
                 <g id="health-scale"></g>
