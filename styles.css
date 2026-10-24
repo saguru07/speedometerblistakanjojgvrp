@@ -1,0 +1,103 @@
+* {
+    user-select: none;
+    user-drag: none;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: transparent !important;
+    font-family: 'Arial Narrow', Arial, sans-serif;
+    margin: 0;
+}
+
+main {
+    position: fixed;
+    bottom: 15px;
+    right: 15px;
+
+    width: 560px;
+    padding: 12px 16px 14px;
+    color: white;
+    background: #141518;
+    border-radius: 56px 56px 26px 26px / 44px 44px 26px 26px;
+    box-shadow: inset 0 0 0 3px #2b2c31, 0 6px 18px #000000AA;
+}
+
+/* Lampu indikator */
+.lamps {
+    display: flex;
+    justify-content: center;
+    gap: 22px;
+    height: 26px;
+    margin-bottom: 4px;
+}
+
+.lamp {
+    width: 24px;
+    height: 24px;
+    color: #2c2d32;
+    transition: color .1s, filter .1s;
+}
+
+.lamp svg { width: 100%; height: 100%; }
+.lamp.flip svg { transform: scaleX(-1); }
+
+.lamp.green.on { color: #3dff7a; filter: drop-shadow(0 0 5px #3dff7a); }
+.lamp.amber.on { color: #ffa21a; filter: drop-shadow(0 0 5px #ff8a00); }
+.lamp.red.on   { color: #ff3b30; filter: drop-shadow(0 0 5px #ff2a20); }
+.lamp.low      { color: #3dff7a; filter: drop-shadow(0 0 5px #3dff7a); }
+.lamp.high     { color: #3b8cff; filter: drop-shadow(0 0 5px #2f7bff); }
+
+/* Dial */
+.gauges {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr;
+    align-items: center;
+    gap: 8px;
+}
+
+.gauge { width: 100%; height: auto; display: block; transition: filter .3s; }
+.engine-off .gauge { filter: brightness(.45); }
+
+.face { fill: #efece4; stroke: #0d0d0f; stroke-width: 3; }
+.tick { stroke: #1a1a1a; stroke-linecap: round; }
+.num {
+    font: 700 11px 'Arial Narrow', Arial, sans-serif;
+    fill: #1a1a1a;
+    text-anchor: middle;
+    dominant-baseline: central;
+}
+.num.tiny { font-size: 9px; }
+.redzone { fill: none; stroke: #d4281f; stroke-width: 5; }
+.sub {
+    font: 700 8px 'Arial Narrow', Arial, sans-serif;
+    fill: #333;
+    text-anchor: middle;
+}
+.icon { color: #222; }
+
+.needle {
+    transform-box: view-box;
+    transform-origin: 100px 100px;
+    transition: transform .15s linear;
+}
+.needle line {
+    stroke: #ff6a1a;
+    stroke-width: 3.5;
+    stroke-linecap: round;
+}
+.needle.small line { stroke-width: 3; }
+.hub { fill: #1b1b1e; stroke: #3a3a40; stroke-width: 1.5; }
+
+/* LCD tengah speedometer */
+.lcd { fill: #cbd2bb; stroke: #3a3a3a; stroke-width: 1.2; }
+.lcdtxt {
+    font: 700 9px 'Courier New', monospace;
+    fill: #222;
+    text-anchor: middle;
+}
+.digital {
+    font: 700 15px 'Arial Narrow', Arial, sans-serif;
+    fill: #111;
+    text-anchor: middle;
+}
