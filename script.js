@@ -6,7 +6,8 @@ const NS = 'http://www.w3.org/2000/svg';
 const clamp01 = v => Math.min(1, Math.max(0, Number(v) || 0));
 
 // Sudut jarum (derajat, searah jarum jam dari atas)
-const SWEEP = { big: [-135, 135], small: [-70, 70] };
+const SWEEP = { big: [-135, 135], fuel: [230, 310], health: [130, 50] };
+const MAX_KMH = 140;
 
 /* ---------- Helper SVG ---------- */
 function svgEl(tag, attrs, parent) {
@@ -65,7 +66,7 @@ function setEngine(state) {
  * @description Jarum selalu memakai skala km/h; angka digital mengikuti speed mode.
  */
 function setSpeed(speed) {
-    setNeedle(elements.needleSpeed, (speed * 3.6) / 240, SWEEP.big);
+    setNeedle(elements.needleSpeed, (speed * 3.6) / MAX_KMH, SWEEP.big);
     switch (speedMode) {
         case 1: elements.speed.textContent = `${Math.round(speed * 2.236936)} MPH`; break; // MPH
         case 2: elements.speed.textContent = `${Math.round(speed * 1.943844)} Knots`; break; // Knots
@@ -86,7 +87,7 @@ function setRPM(rpm) {
  * @param {number} fuel - The fuel level (0 to 1).
  */
 function setFuel(fuel) {
-    setNeedle(elements.needleFuel, fuel, SWEEP.small);
+    setNeedle(elements.needleFuel, fuel, SWEEP.fuel);
 }
 
 /**
@@ -94,7 +95,7 @@ function setFuel(fuel) {
  * @param {number} health - The vehicle health level (0 to 1).
  */
 function setHealth(health) {
-    setNeedle(elements.needleHealth, health, SWEEP.small);
+    setNeedle(elements.needleHealth, health, SWEEP.health);
     lamp(elements.lampEngine, clamp01(health) < 0.3);
 }
 
@@ -181,13 +182,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const [rx1, ry1] = pt(100, 100, 82, 8 * 27 - 135), [rx2, ry2] = pt(100, 100, 82, 135);
     svgEl('path', { class: 'redzone', d: `M${rx1} ${ry1}A82 82 0 0 1 ${rx2} ${ry2}` }, tach);
 
-    // Speedometer 0-240 km/h
-    drawScale($('speed-scale'), { r: 90, from: 0, to: 240, major: 20, minor: 10, lr: 68, cls: 'num tiny', label: v => v, majLen: 11, minLen: 6 });
+    // Speedometer 0-140 km/h
+    drawScale($('speed-scale'), { r: 90, from: 0, to: MAX_KMH, major: 20, minor: 10, lr: 68, cls: 'num', label: v => v, majLen: 11, minLen: 6 });
 
     // Fuel (E-F) dan Engine Health (0-100)
-    const small = { cy: 104, r: 44, from: 0, to: 1, major: 0.5, minor: 0.25, sweep: SWEEP.small, majLen: 8, minLen: 5, lr: 29, cls: 'num tiny' };
-    drawScale($('fuel-scale'), { ...small, cx: 58, label: v => (v === 0 ? 'E' : v === 1 ? 'F' : '') });
-    drawScale($('health-scale'), { ...small, cx: 142, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
+    const small = { cy: 100, r: 48, from: 0, to: 1, major: 0.5, minor: 0.25, majLen: 8, minLen: 5, lr: 33, cls: 'num tiny' };
+    drawScale($('fuel-scale'), { ...small, cx: 78, sweep: SWEEP.fuel, label: v => (v === 0 ? 'E' : v === 1 ? 'F' : '') });
+    drawScale($('health-scale'), { ...small, cx: 122, sweep: SWEEP.health, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
 
     // Posisi awal
     setSpeed(0); setRPM(0); setFuel(0); setHealth(1);
