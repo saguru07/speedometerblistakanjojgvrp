@@ -20,7 +20,7 @@ main {
     padding: 12px 16px 14px;
     color: white;
     background: #141518;
-    border-radius: 110px 110px 150px 150px / 80px 80px 70px 70px;
+    border-radius: 110px 110px 0 0 / 80px 80px 0 0;
     box-shadow: inset 0 0 0 3px #2b2c31, 0 6px 18px #000000AA;
 }
 
@@ -93,8 +93,9 @@ main {
 }
 
 .gauge.side { transform: translateY(-16px); }
-.gauge { width: 100%; height: auto; display: block; transition: filter .3s; }
-.engine-off .gauge { filter: brightness(.45); }
+.gauge { width: 100%; height: auto; display: block; }
+/* Redupkan semua bagian dial kecuali odometer */
+.engine-off .gauge > :not(foreignObject) { filter: brightness(.45); }
 
 .face { fill: #efece4; stroke: #0d0d0f; stroke-width: 3; }
 .tick { stroke: #1a1a1a; stroke-linecap: round; }
@@ -116,7 +117,7 @@ main {
 .needle {
     transform-box: view-box;
     transform-origin: 100px 100px;
-    transition: transform .15s linear;
+    transition: transform .15s linear, filter .3s;
 }
 .needle line {
     stroke: #ff6a1a;
