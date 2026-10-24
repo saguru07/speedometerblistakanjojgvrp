@@ -27,15 +27,12 @@
     </svg>
 
     <main class="speedometer">
-        <div class="lamps">
-            <span class="lamp green" id="lamp-left"><svg><use href="#ic-arrow"/></svg></span>
-            <span class="lamp amber" id="lamp-engine"><svg><use href="#ic-engine"/></svg></span>
-            <span class="lamp red" id="lamp-seatbelt"><svg><use href="#ic-belt"/></svg></span>
-            <span class="lamp" id="lamp-headlights"><svg><use href="#ic-beam"/></svg></span>
-            <span class="lamp green flip" id="lamp-right"><svg><use href="#ic-arrow"/></svg></span>
-        </div>
-
         <div class="gauges">
+            <!-- Lampu di antara dial -->
+            <span class="lamp pos-top-right" id="lamp-headlights"><svg><use href="#ic-beam"/></svg></span>
+            <span class="lamp green pos-bottom-left" id="lamp-engine"><svg><use href="#ic-engine"/></svg></span>
+            <span class="lamp red pos-bottom-right" id="lamp-seatbelt"><svg><use href="#ic-belt"/></svg></span>
+
             <!-- Tachometer -->
             <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="RPM">
                 <circle class="face" cx="100" cy="100" r="96"/>
@@ -49,10 +46,12 @@
             <svg class="gauge" viewBox="0 0 200 200" role="img" aria-label="Speed">
                 <circle class="face" cx="100" cy="100" r="96"/>
                 <g id="speed-scale"></g>
-                <text class="sub" x="100" y="62">km/h</text>
+                <text class="sub" x="100" y="62">mph</text>
                 <rect class="lcd" x="64" y="138" width="72" height="16" rx="2"/>
                 <text class="lcdtxt" id="odometer" x="100" y="146">0.0 mi</text>
                 <text class="digital" id="speed" x="100" y="124">0 MPH</text>
+                <use class="ind" id="lamp-left" href="#ic-arrow" x="46" y="111" width="18" height="16"/>
+                <g transform="translate(154 111) scale(-1 1)"><use class="ind" id="lamp-right" href="#ic-arrow" width="18" height="16"/></g>
                 <text class="sub" x="100" y="168">Gear <tspan id="gear" font-weight="700">N/R</tspan></text>
                 <g class="needle" id="needle-speed"><line x1="100" y1="114" x2="100" y2="24"/></g>
                 <circle class="hub" cx="100" cy="100" r="9"/>
