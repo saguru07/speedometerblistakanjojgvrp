@@ -62,17 +62,12 @@ function setEngine(state) {
 }
 
 /**
- * Updates the speed display based on the current speed mode.
+ * Updates the speedometer needle.
  * @param {number} speed - The speed value in meters per second (m/s).
- * @description Jarum selalu memakai skala mph; angka digital mengikuti speed mode.
+ * @description Jarum memakai skala mph. Tidak ada angka digital di tengah dial.
  */
 function setSpeed(speed) {
     setNeedle(elements.needleSpeed, (speed * 2.236936) / MAX_SPEED, SWEEP.big);
-    switch (speedMode) {
-        case 1: elements.speed.textContent = `${Math.round(speed * 2.236936)} MPH`; break; // MPH
-        case 2: elements.speed.textContent = `${Math.round(speed * 1.943844)} Knots`; break; // Knots
-        default: elements.speed.textContent = `${Math.round(speed * 3.6)} KMH`; // KMH
-    }
 }
 
 /**
@@ -171,26 +166,59 @@ function setSeatbelts(state) {
 }
 
 /**
- * Sets the speed display mode.
- * @param {number} mode - The speed mode to set (0: KMH, 1: MPH, 2: Knots).
+ * Dipertahankan agar kompatibel. Dial hanya menampilkan mph, jadi mode tidak berpengaruh.
+ * @param {number} mode - (tidak dipakai)
  */
 function setSpeedMode(mode) {
     speedMode = mode;
 }
 
+const ODO_DIGITS = 6;
+
+/** Membuat kolom angka odometer mekanik. */
+function buildOdometer() {
+    elements.odometer.replaceChildren();
+    for (let i = 0; i < ODO_DIGITS; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'odo-cell';
+        cell.appendChild(document.createElement('span')).textContent = '0';
+        elements.odometer.appendChild(cell);
+    }
+}
+
+/** Angka baru turun dari atas dan menggantikan angka lama yang turun keluar. */
+function rollDigit(cell, value) {
+    const spans = cell.querySelectorAll('span');
+    const current = spans[spans.length - 1];
+    if (current.textContent === value) return;
+    spans.forEach(s => { if (s !== current) s.remove(); });
+
+    const next = document.createElement('span');
+    next.textContent = value;
+    next.style.transition = 'none';
+    next.style.transform = 'translateY(-100%)';
+    cell.appendChild(next);
+    void next.offsetHeight; // paksa reflow agar transisi berjalan
+    next.style.transition = '';
+    next.style.transform = 'translateY(0)';
+    current.style.transform = 'translateY(100%)';
+    setTimeout(() => current.remove(), 400);
+}
+
 /**
- * Updates the odometer display.
+ * Updates the odometer display (6 digit, digit terakhir = 0.1 mil).
  * @param {number} distance - The distance in miles.
  */
 function setOdometer(distance) {
-    elements.odometer.textContent = distance.toFixed(1) + ' mi';
+    const value = Math.min(10 ** ODO_DIGITS - 1, Math.max(0, Math.floor(distance * 10)));
+    const digits = String(value).padStart(ODO_DIGITS, '0');
+    elements.odometer.querySelectorAll('.odo-cell').forEach((cell, i) => rollDigit(cell, digits[i]));
 }
 
 // Wait for the DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     const $ = id => document.getElementById(id);
     elements = {
-        speed: $('speed'),
         gears: $('gears'),
         odometer: $('odometer'),
         needleRpm: $('needle-rpm'),
@@ -219,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
     drawScale($('health-scale'), { ...small, cx: 130, sweep: SWEEP.health, label: v => (v === 0 ? '0' : v === 1 ? '100' : '') });
 
     buildGears(maxGear);
+    buildOdometer();
 
     // Posisi awal
     setEngine(false); setGear(0); setSpeed(0); setRPM(0); setFuel(0); setHealth(1);
@@ -226,11 +255,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Preview di browser: buka index.html#demo
     if (location.hash === '#demo') {
         let t = 0;
-        setEngine(true); setOdometer(12345.6); setFuel(0.65); setHeadlights(1); setSeatbelts(true);
+        setEngine(true); let odo = 12345.6; setOdometer(odo); setFuel(0.65); setHeadlights(1); setSeatbelts(true);
         setInterval(() => {
             t += 0.03;
             const k = (Math.sin(t) + 1) / 2;
-            setSpeed(k * 60); setGear(Math.min(maxGear, 1 + Math.floor(k * maxGear))); setRPM(0.15 + k * 0.75); setHealth(1 - k * 0.8);
+            odo += 0.02 + k * 0.1; setOdometer(odo); setSpeed(k * 60); setGear(Math.min(maxGear, 1 + Math.floor(k * maxGear))); setRPM(0.15 + k * 0.75); setHealth(1 - k * 0.8);
             setLeftIndicator(Math.sin(t * 8) > 0);
         }, 50);
     }
