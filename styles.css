@@ -27,6 +27,7 @@ main {
 /* Lampu indikator (di antara dial) */
 .lamp {
     position: absolute;
+    z-index: 2;
     width: 24px;
     height: 24px;
     color: #2c2d32;
@@ -141,6 +142,7 @@ main {
 /* Odometer mekanik */
 .odometer {
     position: absolute;
+    z-index: 2;
     left: 50%;
     top: 64%;
     transform: translateX(-50%);
