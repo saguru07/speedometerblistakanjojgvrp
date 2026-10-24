@@ -141,12 +141,8 @@ main {
 
 /* Odometer mekanik */
 .odometer {
-    position: absolute;
-    z-index: 2;
-    left: 50%;
-    top: 64%;
-    transform: translateX(-50%);
     display: flex;
+    width: max-content;
     gap: 1px;
     padding: 2px;
     background: #2b2b2e;
